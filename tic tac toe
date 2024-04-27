@@ -1,0 +1,89 @@
+import random
+import time
+print ("WELCOME TO TIC TAC TOE GAME")
+def print_board(board):
+    print("\nLet's start Tic Tac Toe!")
+    print()
+    for row in board:
+        print("  " + " | ".join(row))
+        if row != board[-1]:
+            print(" " + "-" * 9)
+    print()
+
+def check_winner(board, player):
+    for row in board:
+        if all(cell == player for cell in row):
+            return True
+    for col in range(3):
+        if all(board[row][col] == player for row in range(3)):
+            return True
+    if all(board[i][i] == player for i in range(3)):
+        return True
+    if all(board[i][2 - i] == player for i in range(3)):
+        return True
+    return False
+
+def is_board_full(board):
+    for row in board:
+        if " " in row:
+            return False
+    return True
+
+def get_empty_positions(board):
+    positions = []
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == " ":
+                positions.append((i, j))
+    return positions
+
+def player_move(board):
+    while True:
+        try:
+            print("Your move!")
+            row = int(input("Enter the row (1, 2, or 3): ")) - 1
+            col = int(input("Enter the column (1, 2, or 3): ")) - 1
+            if board[row][col] == " ":
+                return row, col
+            else:
+                print("That position is already taken! Try again.")
+        except (ValueError, IndexError):
+            print("Invalid input. Please enter a number between 1 and 3.")
+
+def ai_move(board):
+    print("Computer is thinking...")
+    time.sleep(random.uniform(0.5, 1.5))  # Simulate thinking time
+    empty_positions = get_empty_positions(board)
+    return random.choice(empty_positions)
+
+def main():
+    board = [[" " for _ in range(3)] for _ in range(3)]
+    players = ["X", "O"]
+    current_player = random.choice(players)
+
+    while True:
+        print_board(board)
+
+        if current_player == "X":
+            row, col = player_move(board)
+        else:
+            row, col = ai_move(board)
+
+        board[row][col] = current_player
+
+        if check_winner(board, current_player):
+            print_board(board)
+            if current_player == "X":
+                print("Congratulations! You win!")
+            else:
+                print("Sorry, the computer wins. Better luck next time!")
+            break
+        elif is_board_full(board):
+            print_board(board)
+            print("It's a tie! Nobody wins!")
+            break
+
+        current_player = "X" if current_player == "O" else "O"
+
+if __name__ == "__main__":
+    main()
